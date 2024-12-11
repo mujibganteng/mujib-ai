@@ -1,0 +1,225 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUJIB AI - Chat Interface</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            height: 100vh;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.5s;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px crimson;
+        }
+        .chat-container {
+            width: 80%;
+            max-width: 600px;
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #2a2a2a;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+            max-height: 400px;
+            animation: pulse 1.5s infinite;
+            transition: all 0.5s;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .user-message {
+            background-color: #007bff;
+            color: #ffffff;
+            align-self: flex-end;
+        }
+        .ai-message {
+            background-color: #444;
+            color: #ffffff;
+            align-self: flex-start;
+        }
+        .input-container {
+            display: flex;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .input-field {
+            padding: 10px;
+            font-size: 16px;
+            width: 70%;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .button {
+            padding: 10px;
+            background-color: crimson;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: orange;
+        }
+        .warning {
+            color: yellow;
+            font-weight: bold;
+            font-size: 20px;
+            display: none;
+            margin-top: 20px;
+        }
+        .instructions {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #ffcc00;
+            text-align: left;
+            background-color: rgba(255, 255, 0, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .countdown {
+            font-size: 24px;
+            color: crimson;
+            margin-top: 20px;
+            display: none;
+        }
+        .log {
+            font-family: 'Courier New', Courier, monospace;
+            color: #00ff00;
+            margin-top: 10px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        .hacked {
+            animation: glitch 0.5s infinite;
+        }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, -2px); }
+            40% { transform: translate(2px, 0); }
+            60% { transform: translate(-2px, 2px); }
+            80% { transform: translate(2px, 0); }
+            100% { transform: translate(0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>MUJIB AI</h1>
+    <div class="chat-container" id="chat-container">
+        <div class="message ai-message">Halo! Saya MUJIB AI. Masukkan perintah Anda di bawah ini.</div>
+    </div>
+    
+    <div class="input-container">
+        <input type="text" id="command" class="input-field" placeholder="Masukkan perintah..." />
+        <button class="button" onclick="executeCommand()">Kirim</button>
+    </div>
+    <p id="warning" class="warning">PERINGATAN: SISTEM ANDA TELAH TERANCAM! JANGAN TEKAN APA-APA, SEGERA MATIKAN ULANG HP ANDA!</p>
+    <div id="instructions" class="instructions">
+        <strong>Instruksi untuk Mematikan Ulang Perangkat:</strong>
+        <ol>
+            <li>Tekan dan tahan tombol daya pada perangkat Anda.</li>
+            <li>Pilih opsi "Matikan" atau "Restart".</li>
+            <li>Ikuti petunjuk pada layar untuk mematikan perangkat.</li>
+        </ol>
+    </div>
+    <div class="countdown" id="countdown">Hitung Mundur: <span id="time">10</span> detik</div>
+    <div class="log" id="log"></div>
+
+    <audio id="alert-sound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+    <audio id="panic-sound" src="https://www.soundjay.com/button/sounds/beep-07.wav"></audio>
+
+    <script>
+        function executeCommand() {
+            const commandInput = document.getElementById('command');
+            const chatContainer = document.getElementById('chat-container');
+            const warningText = document.getElementById('warning');
+            const instructions = document.getElementById('instructions');
+            const log = document.getElementById('log');
+            const countdown = document.getElementById('countdown');
+            const timeDisplay = document.getElementById('time');
+            const alertSound = document.getElementById('alert-sound');
+            const panicSound = document.getElementById('panic-sound');
+
+            if (commandInput.value.trim() !== "") {
+                // Tampilkan pesan pengguna
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user-message';
+                userMessage.innerText = commandInput.value;
+                chatContainer.appendChild(userMessage);
+
+                // Log perintah
+                log.innerHTML += `> ${commandInput.value}<br>`;
+                
+                // Kosongkan input
+                commandInput.value = '';
+
+                // Tampilkan pesan sistem
+                const aiMessage = document.createElement('div');
+                aiMessage.className = 'message ai-message';
+                aiMessage.innerText = 'Memulai proses meretas data...';
+                chatContainer.appendChild(aiMessage);
+
+                // Tampilkan peringatan setelah delay
+                setTimeout(() => {
+                    aiMessage.innerText = 'PERINGATAN: SISTEM ANDA TELAH TERANCAM! JANGAN TEKAN APA-APA, SEGERA MATIKAN ULANG HP ANDA!';
+                    warningText.style.display = 'block';
+                    instructions.style.display = 'block';
+                    
+                    // Mainkan suara peringatan
+                    alertSound.play();
+                    
+                    // Hitung mundur
+                    countdown.style.display = 'block';
+                    let countdownTime = 10;
+                    timeDisplay.innerText = countdownTime;
+
+                    const countdownInterval = setInterval(() => {
+                        panicSound.play();
+                        countdownTime--;
+                        timeDisplay.innerText = countdownTime;
+                        if (countdownTime <= 0) {
+                            clearInterval(countdownInterval);
+                            triggerHackedEffect();
+                        }
+                    }, 1000); // Update setiap detik
+                }, 3000); // 3 detik
+            }
+        }
+
+        function triggerHackedEffect() {
+            const body = document.body;
+            const chatContainer = document.getElementById('chat-container');
+            body.classList.add('hacked');
+            chatContainer.classList.add('hacked');
+
+            // Tampilkan pesan akhir
+            const hackedMessage = document.createElement('div');
+            hackedMessage.className = 'message ai-message';
+            hackedMessage.innerText = 'SISTEM TERKENDALI! SEGERA MATIKAN ULANG PERANGKAT!';
+            chatContainer.appendChild(hackedMessage);
+        }
+    </script>
+</body>
+</html>
